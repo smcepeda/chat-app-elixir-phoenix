@@ -17,6 +17,7 @@ defmodule ChatWeb.RoomLive do
   end
 
   @impl true
+  @spec handle_event(<<_::96, _::_*16>>, map, any) :: {:noreply, any}
   def handle_event("submit_message", %{"chat" => %{"message" => message}}, socket) do
     message = %{uuid: UUID.uuid4(), content: message, username: socket.assigns.username}
     ChatWeb.Endpoint.broadcast(socket.assigns.topic, "new-message", message)
@@ -41,6 +42,8 @@ defmodule ChatWeb.RoomLive do
 
     leave_messages = leaves |> Map.keys() |> Enum.map(fn username -> %{uuid: UUID.uuid4(), content: "#{username} left", type: :system} end)
 
+    user_list = ChatWeb.Presence.get_by_key(socket.assigns.topic, socket.assigns.username)
+    Logger.info(user_list: user_list)
     {:noreply, assign(socket, messages: join_messages ++ leave_messages)}
   end
 
