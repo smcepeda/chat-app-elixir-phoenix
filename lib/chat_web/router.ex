@@ -18,6 +18,7 @@ defmodule ChatWeb.Router do
     pipe_through :browser
 
     live "/", PageLive, :index
+    live "/:id", RoomLive, :index
     # get "/", PageController, :index
   end
 
